@@ -1,0 +1,36 @@
+
+
+
+body {
+    background-image: url(bg.jpg);
+    background-size : cover;
+    font-size: 40px;
+    text-align: center;
+    /*background-color: rgba(5, 5, 8,0.5);
+    padding: 50px 20px 50px 20px; */ 
+    /* border: 5px solid rgba(8, 20, 63,1); */
+}
+footer {
+    font-size: 20px;
+    clear: both;
+    text-align: center;
+    color: white;
+}
+
+h1 { 
+    color: white;
+    text-align: center;
+    font-size: 70px;
+    background-color: rgba(5, 5, 8,.5);
+    padding: 50px 20px 50px 20px;       /* samajh nhi aya */
+    font-family: 'Fuzzy Bubbles', cursive;
+    /*box-shadow: 4px 4px 5px 4px black; */
+    /* border: 10px black; */
+}
+
+img {
+    transition: all 1s;
+}
+img:hover {
+    transform:scale(1.1);
+}
