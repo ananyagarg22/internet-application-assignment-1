@@ -9,21 +9,115 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>My Weather App</title>
-        <script src="https:;//unpkg.com/vue@next"></script>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/vue@next"></script>
         <link rel="stylesheet" type="text/css" href="weather.css">
         <link href="https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@700&display=swap" rel="stylesheet">
-        
     </head>
     <body>
-       <h1>Weather App
-        <img src ="cloudy-day.png" width=" 80px" heaight ="80px">
-       </h1> 
-       <form>
-        <b>City: </b> <input type = "text" required placeholder ="Enter city">
-        <input type = "submit" value = "Search">
-        <input type ="reset">
-       </form>
-       <footer><p> Website made with love by Ananya Garg </p></footer>
-    </body>
-</html> 
+        <div id="app"> 
+            <h1 id="headingId"> 
+                My Weather App
+                <img src="./images/cloudy-day.png">
+            </h1> 
+            <div class="search-box">
+                <b>Enter the City: </b> <input type = "text" class = "search" required v-model="message" v-on:keyup.enter="getData" placeholder ="e.g Dublin,IE">
+                <button v-on:click="getData">Search</button>
+                <button v-on:click="reset">Reset</button>
+                <br>
+                <br>
+            </div>
+            <div class="others" id="current-weather-items">
+                <div class="heading-small" v-if="umbrella_status != ''">
+                    <b><u>Travelling Advice : </b></u>
+                <div>{{umbrella_status}}</div>
+                <div>{{pollution_status}}</div>
+                </div>
+            </div>
+        <!-- Creating table to display forecast -->
+            <br>
+            <table style="border:1px solid black;margin-left:auto;margin-right:auto;">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Temperature(°C)</th>
+                        <th>Feels Like(°C)</th>
+                        <th>Rainfall(mm)</th>
+                        <th>Wind Speed(m/s)</th>
+                        <th>Pack for(Weather)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="row in json_data.list">
+                        <td>{{row.dt_txt}}</td>
+                        <td>{{row.weather[0].description}}</td>
+                        <td>{{row.main.temp}}</td>
+                        <td>{{row.main.feels_like}}</td>
+                        <td v-if="row.rain == undefined">0</td>
+                        <td v-else>{{row.rain["3h"]}}</td>
+                        <td>{{row.wind.speed}}</td>
+                        <td v-if="row.main.temp<=12">COLD</td>
+                        <td v-if="row.main.temp>12 && row.main.temp<24">MILD</td>
+                        <td v-if="row.main.temp>=24">HOT</td>
+                    </tr>
+                </tbody>
+                </tbody>
+            </table> 
+        </div>
+        </body>
+        <!-- Creating the Vue APP -->
+        <script>
+            const app = Vue.createApp({  
+                data() {
+                return {
+                        message:'',
+                        json_data:{},
+                        umbrella_status:'',
+                        pollution_status:'',
+                    }
+                },          
+                methods: {
+                    getData: async function() {
+                        // console.log("Hello ");
+                        city = this.message;
+                        console.log(city)
+                        let url = `http://localhost:3300/${city}`;
+                        let response = await fetch(url);
+                        let data = await response.json();
+                        console.log(data);
+                        if(this.json_data.cod == "404") {
+                            console.log(this.json_data.message)
+                        }
+                        this.json_data = data;
+                        if(data == {} || data == undefined) {
+                            this.umbrella_status = ''
+                        } else {
+                            this.umbrella_status = "Carry no umbrella! Have a nice Day 🌞 "
+                            for(let i=0;i<data.list.length;i++) {
+                                if(data.list[i].rain != undefined) {
+                                    this.umbrella_status = "Carry an Umbrella! It's gonna rain ☔"
+                                }
+                            }
+                        }
+                        url = `http://localhost:3300/${data.city.coord.lat}/${data.city.coord.lon}`;
+                        response = await fetch(url)
+                        data = await response.json()
+                        this.pollution_status = "No need to wear a mask! Enjoy your day!😃"
+                        for(let i=0;i<data.list.length;i++) {
+                            if(data.list[i].components.pm2_5 > 10) {
+                                this.pollution_status = "Wear a mask!😷"
+                                break;
+                            }
+                        }
+                    },
+                    reset() {
+                        this.message = ''
+                        this.json_data= {}
+                        this.umbrella_status = ''
+                        this.pollution_status = ''
+                    }
+                }
+            }).mount("#app");
+        </script>
+        <footer><p> Website made with love by Ananya Garg </p></footer>
+</html>
