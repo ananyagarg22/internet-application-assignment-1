@@ -10,3 +10,4 @@ You are asked to produce an application that inputs the city that someone is pla
 * Packing: if there is rain anytime over the next 5-days indicate that the user should bring an umbrella
 * Indicate whether the user should pack for Cold (temp range -10..+10), Warm (+10-+20) or Hot (20+)
 * Give a summary table for the next 5 days showing: Temperature, Wind Speed and Rainfall level
+* When you request the weather data for a city, it will return you the Longitude and Latitude of the city. You can then use these in the AIR Pollution API to get the PM2_5 forecast for the next 5 days. If this exceeds 10, then you should advise the user to wear a mask.
